@@ -1,3 +1,7 @@
+const moment = require("moment");
+const axios = require("axios").default;
+const WorldState = require("warframe-worldstate-parser");
+
 /**
  * @typedef AlertReward
  * @type {object}
@@ -19,10 +23,6 @@
  * @property {Boolean} archwing Requires archwing
  * @property {AlertReward} reward
  */
-
-const moment = require("moment");
-const axios = require("axios").default;
-const WorldState = require("warframe-worldstate-parser");
 
 /**
  * Get current alerts
@@ -60,4 +60,61 @@ function alerts() {
     });
 }
 
-module.exports = { alerts };
+/**
+ * @typedef Mission
+ * @type {Object}
+ * @property {String} missionType
+ * @property {String} modifier
+ * @property {String} modifierDescription
+ * @property {String} node
+ */
+
+/**
+ * @typedef SortieResult
+ * @type {Object}
+ * @property {Number} expiry
+ * @property {String} faction
+ * @property {String} boss
+ * @property {String} availableFor
+ * @property {Mission[]} missions
+ */
+
+/**
+ * Get current sortie
+ * @returns {Promise<SortieResult>}
+ */
+function sortie() {
+  return axios
+    .get("http://content.warframe.com/dynamic/worldState.php")
+    .then(response => response.data)
+    .then(data => JSON.stringify(data))
+    .then(worldstateData => {
+      const ws = new WorldState(worldstateData);
+
+      const result = {
+        // @ts-ignore
+        expiry: moment(ws.sortie.expiry).unix(),
+        // @ts-ignore
+        faction: ws.sortie.faction,
+        // @ts-ignore
+        boss: ws.sortie.boss,
+        // @ts-ignore
+        availableFor: ws.sortie.eta,
+        missions: []
+      };
+
+      // @ts-ignore
+      ws.sortie.variants.forEach(variant => {
+        result.missions.push({
+          missionType: variant.missionType,
+          modifier: variant.modifier,
+          modifierDescription: variant.modifierDescription,
+          node: variant.node
+        });
+      });
+
+      return result;
+    });
+}
+
+module.exports = { alerts, sortie };

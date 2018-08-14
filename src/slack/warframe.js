@@ -18,6 +18,9 @@ function slashWF(requestBody) {
     case "alerts":
       alerts(requestBody);
       break;
+    case "sortie":
+      sortie(requestBody);
+      break;
     default:
       unknown(requestBody);
       break;
@@ -184,6 +187,33 @@ function alerts(requestBody) {
         requestBody.response_url,
         "in_channel",
         "",
+        attachments
+      );
+    })
+    .catch(error => handleError(error, requestBody));
+}
+
+function sortie(requestBody) {
+  warframe.worldstate
+    .sortie()
+    .then(result => {
+      const attachments = [];
+
+      result.missions.forEach(mission => {
+        const text = `${mission.node}\n${mission.modifier}\n${
+          mission.modifierDescription
+        }`;
+        attachments.push({
+          title: mission.missionType,
+          fallback: mission.missionType,
+          text
+        });
+      });
+
+      return messaging.sendSlashMessage(
+        requestBody.response_url,
+        "in_channel",
+        `Here is the current sortie. Expires in *${result.availableFor}*`,
         attachments
       );
     })
