@@ -217,7 +217,7 @@ function sortie(requestBody) {
       return messaging.sendSlashMessage(
         requestBody.response_url,
         "in_channel",
-        `Here is the current sortie.\nBoss: ${result.boss}\nFaction: *${
+        `Here is the current sortie.\nBoss: *${result.boss}*\nFaction: *${
           result.faction
         }*\nExpires in *${result.availableFor}*`,
         attachments
