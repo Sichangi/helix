@@ -68,6 +68,11 @@ function help(requestBody) {
       title: "alerts",
       fallback: "alerts",
       text: `Returns the current alerts e.g. \`${command} alerts\``
+    },
+    {
+      title: "sortie",
+      fallback: "sortie",
+      text: `Returns the current sortie e.g. \`${command} sortie\``
     }
   ];
 
