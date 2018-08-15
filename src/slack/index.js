@@ -1,4 +1,5 @@
 const express = require("express");
+const winston = require("winston");
 
 const { slashWF } = require("./warframe");
 
@@ -9,7 +10,7 @@ router.get("/", (req, res) => {
 });
 
 router.post("/slashes/warframe", (req, res) => {
-  console.log(
+  winston.debug(
     `User: ${req.body.user_name} (${req.body.user_id}) -> ${req.body.command} ${
       req.body.text
     }`

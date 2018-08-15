@@ -1,3 +1,4 @@
+const winston = require("winston");
 const moment = require("moment");
 const warframe = require("./../shared/warframe");
 const messaging = require("./messaging");
@@ -37,6 +38,7 @@ function slashWF(requestBody) {
  */
 function unknown(requestBody) {
   const command = requestBody.command;
+  winston.warn(`Unknown command: \`${command} ${requestBody.text}`);
   messaging
     .sendSlashMessage(
       requestBody.response_url,
@@ -267,7 +269,7 @@ function handleError(error, requestBody, query = "") {
   ) {
     error.message = `No results found for *"${query}"*`;
   }
-  console.log(error.message);
+  winston.error(error.message);
 
   const attachments = [
     {

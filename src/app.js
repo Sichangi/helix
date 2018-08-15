@@ -1,5 +1,28 @@
 const bodyParser = require("body-parser");
 const express = require("express");
+const winston = require("winston");
+
+// Initialize logger
+const { combine, timestamp, printf } = winston.format;
+const customFormat = printf(info => {
+  return `${info.timestamp} ${info.level}: ${info.message}`;
+});
+winston.configure({
+  level: "debug",
+  format: combine(timestamp(), customFormat),
+  transports: [
+    new winston.transports.Console(),
+    new winston.transports.File({
+      filename: "./logs/combined.log",
+      format: combine(timestamp(), customFormat)
+    }),
+    new winston.transports.File({
+      level: "error",
+      filename: "./logs/error.log",
+      format: combine(timestamp(), customFormat)
+    })
+  ]
+});
 
 const config = require("./config");
 const slack = require("./slack");
@@ -15,6 +38,12 @@ app.use(
   })
 );
 
+app.use("*", (req, res, next) => {
+  winston.debug(`${req.method} ${req.originalUrl}`);
+
+  next();
+});
+
 app.get("/", (req, res) => {
   res.send("🤖 Helix");
 });
@@ -23,8 +52,8 @@ app.use("/slack", slack.router);
 
 app.listen(PORT, error => {
   if (error) {
-    console.log(error.message);
+    winston.error(error.message);
   } else {
-    console.log(`Running on port ${PORT}`);
+    winston.info(`Running on port ${PORT}`);
   }
 });
