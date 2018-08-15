@@ -1,6 +1,8 @@
 const axios = require("axios").default;
 const striptags = require("striptags");
 
+const wikiBaseUrl = "http://warframe.wikia.com";
+
 /**
  * Search the wiki
  * @param {String} query
@@ -10,9 +12,7 @@ async function search(query, limit = 5) {
   const q = encodeURIComponent(query);
 
   return axios
-    .get(
-      `http://warframe.wikia.com/api/v1/Search/List?query=${q}&limit=${limit}`
-    )
+    .get(`${wikiBaseUrl}/api/v1/Search/List?query=${q}&limit=${limit}`)
     .then(response => {
       const results = [];
 
@@ -40,13 +40,13 @@ async function getDetails(query) {
   return (
     axios
       // Search the wiki for the query
-      .get(`http://warframe.wikia.com/api/v1/Search/List?query=${q}`)
+      .get(`${wikiBaseUrl}/api/v1/Search/List?query=${q}`)
       .then(response => {
         id = response.data.items[0].id;
 
         // Get the initial details of the first result
         return axios.get(
-          `http://warframe.wikia.com/api/v1/Articles/AsSimpleJson?id=${id}`
+          `${wikiBaseUrl}/api/v1/Articles/AsSimpleJson?id=${id}`
         );
       })
       .then(response => {
@@ -55,9 +55,7 @@ async function getDetails(query) {
         }
 
         // Get the remaining details of the first result
-        return axios.get(
-          `http://warframe.wikia.com/api/v1/Articles/Details?ids=${id})`
-        );
+        return axios.get(`${wikiBaseUrl}/api/v1/Articles/Details?ids=${id})`);
       })
       .then(response => {
         const id = Object.keys(response.data.items)[0];
@@ -66,7 +64,7 @@ async function getDetails(query) {
         return {
           title: item.title,
           description,
-          url: `http://warframe.wikia.com${item.url}`,
+          url: `${wikiBaseUrl}${item.url}`,
           image_url: item.thumbnail.split("/window-crop/")[0]
         };
       })
