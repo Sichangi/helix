@@ -134,7 +134,7 @@ function get(requestBody) {
           fallback: result.title,
           title: result.title,
           text: result.description,
-          title_link: `http://warframe.wikia.com/${result.url}`
+          title_link: result.url
         },
         {
           fallback: "Image",

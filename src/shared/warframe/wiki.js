@@ -66,7 +66,7 @@ async function getDetails(query) {
         return {
           title: item.title,
           description,
-          url: `http://warframe.wikia.com/${item.url}`,
+          url: `http://warframe.wikia.com${item.url}`,
           image_url: item.thumbnail.split("/window-crop/")[0]
         };
       })
