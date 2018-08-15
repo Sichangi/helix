@@ -1,3 +1,4 @@
+const moment = require("moment");
 const warframe = require("./../shared/warframe");
 const messaging = require("./messaging");
 
@@ -20,6 +21,9 @@ function slashWF(requestBody) {
       break;
     case "sortie":
       sortie(requestBody);
+      break;
+    case "news":
+      news(requestBody);
       break;
     default:
       unknown(requestBody);
@@ -221,6 +225,33 @@ function sortie(requestBody) {
           result.faction
         }*\nExpires in *${result.availableFor}*`,
         attachments
+      );
+    })
+    .catch(error => handleError(error, requestBody));
+}
+
+/**
+ * Return current news
+ */
+function news(requestBody) {
+  warframe.worldstate
+    .news()
+    .then(news => {
+      const attachmets = [];
+      news.forEach(item => {
+        attachmets.push({
+          fallback: item.message,
+          title: item.message,
+          title_link: item.link,
+          footer: moment.unix(item.date).format("h:mm a, ddd D MMM")
+        });
+      });
+
+      return messaging.sendSlashMessage(
+        requestBody.response_url,
+        "in_channel",
+        "",
+        attachmets
       );
     })
     .catch(error => handleError(error, requestBody));

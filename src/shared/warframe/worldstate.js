@@ -117,4 +117,44 @@ function sortie() {
     });
 }
 
-module.exports = { alerts, sortie };
+/**
+ * @typedef News
+ * @type {Object}
+ * @property {String} message
+ * @property {String} link
+ * @property {String} imageLink
+ * @property {Number} date
+ */
+
+/**
+ * Get the current news
+ * @returns {Promise<News[]>}
+ */
+function news() {
+  return axios
+    .get("http://content.warframe.com/dynamic/worldState.php")
+    .then(response => response.data)
+    .then(data => JSON.stringify(data))
+    .then(worldstateData => {
+      const ws = new WorldState(worldstateData);
+
+      const result = [];
+      ws.news.reverse();
+
+      ws.news.forEach(item => {
+        if (!item.translations.en) {
+          return;
+        }
+        result.push({
+          message: item.translations.en,
+          link: item.link,
+          imageLink: item.imageLink,
+          date: moment(item.date).unix()
+        });
+      });
+
+      return result;
+    });
+}
+
+module.exports = { alerts, sortie, news };
