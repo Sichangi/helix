@@ -79,6 +79,11 @@ function help(requestBody) {
       title: "sortie",
       fallback: "sortie",
       text: `Returns the current sortie e.g. \`${command} sortie\``
+    },
+    {
+      title: "news",
+      fallback: "news",
+      text: `Returns the current news e.g. \`${command} news\``
     }
   ];
 
