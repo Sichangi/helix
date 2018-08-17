@@ -223,12 +223,20 @@ function earth() {
 }
 
 /**
+ * @typedef CetusBounty
+ * @type {object}
+ * @property {String} type
+ * @property {String} enemyLevels
+ * @property {String[]} rewardPool
+ */
+/**
  * @typedef CetusResult
  * @type {object}
  * @property {Boolean} isDay
  * @property {String} timeLeft
+ * @property {String} expires
+ * @property {CetusBounty[]} bounties
  */
-
 /**
  * Get earth time
  * @returns {Promise<CetusResult>}
@@ -241,9 +249,28 @@ function cetus() {
     .then(worldstateData => {
       const ws = new WorldState(worldstateData);
 
+      const bounties = [];
+      let expires = "";
+
+      ws.syndicateMissions.forEach(mission => {
+        if (mission.syndicate == "Ostrons") {
+          mission.jobs.forEach(job => {
+            bounties.push({
+              type: job.type,
+              enemyLevels: `${job.enemyLevels[0]} - ${job.enemyLevels[1]}`,
+              rewardPool: job.rewardPool
+            });
+          });
+
+          expires = mission.eta;
+        }
+      });
+
       return {
         isDay: ws.cetusCycle.isDay,
-        timeLeft: ws.cetusCycle.timeLeft
+        timeLeft: ws.cetusCycle.timeLeft,
+        bounties,
+        expires
       };
     });
 }

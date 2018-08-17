@@ -107,7 +107,7 @@ function help(requestBody) {
     {
       title: "cetus",
       fallback: "cetus",
-      text: `Returns the current time on cetus e.g. \`${command} cetus\``
+      text: `Returns the current time on and bounties cetus e.g. \`${command} cetus\``
     }
   ];
 
@@ -345,17 +345,36 @@ function cetus(requestBody) {
   warframe.worldstate
     .cetus()
     .then(cetus => {
-      let text = "";
+      const attachments = [];
+
+      let timeOfDay = "";
       if (cetus.isDay) {
-        text = `It is now day on Cetus. Time left: ${cetus.timeLeft}`;
+        timeOfDay = "day";
       } else {
-        text = `It is now night on Cetus. Time left: ${cetus.timeLeft}`;
+        timeOfDay = "night";
       }
+      const text = `It is now *${timeOfDay}* on Cetus. Time left: *${
+        cetus.timeLeft
+      }*\nBounties expire in: *${cetus.expires}*`;
+
+      cetus.bounties.forEach(bounty => {
+        attachments.push({
+          fallback: bounty.type,
+          title: bounty.type,
+          text: `Enemy levels: ${
+            bounty.enemyLevels
+          }\nRewards: ${bounty.rewardPool
+            .toString()
+            .replace(/\[|\]/gi, "")
+            .replace(/,/gi, ", ")}`
+        });
+      });
 
       return messaging.sendSlashMessage(
         requestBody.response_url,
         "in_channel",
-        text
+        text,
+        attachments
       );
     })
     .catch(error => handleError(error, requestBody));
