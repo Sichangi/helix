@@ -111,6 +111,11 @@ function help(requestBody) {
       title: "cetus",
       fallback: "cetus",
       text: `Returns the current time on and bounties cetus e.g. \`${command} cetus\``
+    },
+    {
+      title: "fissures",
+      fallback: "fissures",
+      text: `Returns the current fissure missions e.g. \`${command} fissures\``
     }
   ];
 
