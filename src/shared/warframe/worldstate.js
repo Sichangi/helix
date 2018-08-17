@@ -1,5 +1,6 @@
 const moment = require("moment");
 const axios = require("axios").default;
+// @ts-ignore
 const WorldState = require("warframe-worldstate-parser");
 
 /**
@@ -157,4 +158,42 @@ function news() {
     });
 }
 
-module.exports = { alerts, sortie, news };
+/**
+ * @typedef VoidTraderResult
+ * @type {object}
+ * @property {Boolean} active
+ * @property {String} location
+ * @property {String} start
+ * @property {String} end
+ * @property {String[]} inventory
+ */
+/**
+ * Void Trader (Baro) details
+ * @returns {Promise<VoidTraderResult>}
+ */
+function voidTrader() {
+  return axios
+    .get("http://content.warframe.com/dynamic/worldState.php")
+    .then(response => response.data)
+    .then(data => JSON.stringify(data))
+    .then(worldstateData => {
+      const ws = new WorldState(worldstateData);
+
+      const result = {
+        // @ts-ignore
+        active: ws.voidTrader.active,
+        // @ts-ignore
+        location: ws.voidTrader.location,
+        // @ts-ignore
+        start: ws.voidTrader.startString,
+        // @ts-ignore
+        end: ws.voidTrader.endString,
+        // @ts-ignore
+        inventory: ws.voidTrader.inventory
+      };
+
+      return result;
+    });
+}
+
+module.exports = { alerts, sortie, news, voidTrader };

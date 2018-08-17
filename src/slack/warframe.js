@@ -26,6 +26,9 @@ function slashWF(requestBody) {
     case "news":
       news(requestBody);
       break;
+    case "baro":
+      baro(requestBody);
+      break;
     default:
       unknown(requestBody);
       break;
@@ -84,6 +87,11 @@ function help(requestBody) {
       title: "news",
       fallback: "news",
       text: `Returns the current news e.g. \`${command} news\``
+    },
+    {
+      title: "baro",
+      fallback: "baro",
+      text: `Returns the current details on Baro Ki'Teer e.g. \`${command} baro\``
     }
   ];
 
@@ -259,6 +267,33 @@ function news(requestBody) {
         "in_channel",
         "",
         attachmets
+      );
+    })
+    .catch(error => handleError(error, requestBody));
+}
+
+/**
+ * Return details of Baro Ki'Teer
+ */
+function baro(requestBody) {
+  warframe.worldstate
+    .voidTrader()
+    .then(voidTrader => {
+      let text = "";
+      if (voidTrader.active) {
+        text = `Baro Ki'Teer is here for *${voidTrader.end}*\nLocation: *${
+          voidTrader.location
+        }*`;
+      } else {
+        text = `Baro Ki'Teer is coming in *${voidTrader.start}* to *${
+          voidTrader.location
+        }*`;
+      }
+
+      return messaging.sendSlashMessage(
+        requestBody.response_url,
+        "in_channel",
+        text
       );
     })
     .catch(error => handleError(error, requestBody));
