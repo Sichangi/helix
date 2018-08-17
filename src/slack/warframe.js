@@ -29,6 +29,12 @@ function slashWF(requestBody) {
     case "baro":
       baro(requestBody);
       break;
+    case "earth":
+      earth(requestBody);
+      break;
+    case "cetus":
+      cetus(requestBody);
+      break;
     default:
       unknown(requestBody);
       break;
@@ -92,6 +98,16 @@ function help(requestBody) {
       title: "baro",
       fallback: "baro",
       text: `Returns the current details on Baro Ki'Teer e.g. \`${command} baro\``
+    },
+    {
+      title: "earth",
+      fallback: "earth",
+      text: `Returns the current time on earth e.g. \`${command} earth\``
+    },
+    {
+      title: "cetus",
+      fallback: "cetus",
+      text: `Returns the current time on cetus e.g. \`${command} cetus\``
     }
   ];
 
@@ -288,6 +304,52 @@ function baro(requestBody) {
         text = `Baro Ki'Teer is coming in *${voidTrader.start}* to *${
           voidTrader.location
         }*`;
+      }
+
+      return messaging.sendSlashMessage(
+        requestBody.response_url,
+        "in_channel",
+        text
+      );
+    })
+    .catch(error => handleError(error, requestBody));
+}
+
+/**
+ * Get current time on earth
+ */
+function earth(requestBody) {
+  warframe.worldstate
+    .earth()
+    .then(earth => {
+      let text = "";
+      if (earth.isDay) {
+        text = `It is now day on Earth. Time left: ${earth.timeLeft}`;
+      } else {
+        text = `It is now night on Earth. Time left: ${earth.timeLeft}`;
+      }
+
+      return messaging.sendSlashMessage(
+        requestBody.response_url,
+        "in_channel",
+        text
+      );
+    })
+    .catch(error => handleError(error, requestBody));
+}
+
+/**
+ * Get current time on cetus
+ */
+function cetus(requestBody) {
+  warframe.worldstate
+    .cetus()
+    .then(cetus => {
+      let text = "";
+      if (cetus.isDay) {
+        text = `It is now day on Cetus. Time left: ${cetus.timeLeft}`;
+      } else {
+        text = `It is now night on Cetus. Time left: ${cetus.timeLeft}`;
       }
 
       return messaging.sendSlashMessage(

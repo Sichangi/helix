@@ -196,4 +196,56 @@ function voidTrader() {
     });
 }
 
-module.exports = { alerts, sortie, news, voidTrader };
+/**
+ * @typedef EarthResult
+ * @type {object}
+ * @property {Boolean} isDay
+ * @property {String} timeLeft
+ */
+
+/**
+ * Get earth time
+ * @returns {Promise<EarthResult>}
+ */
+function earth() {
+  return axios
+    .get("http://content.warframe.com/dynamic/worldState.php")
+    .then(response => response.data)
+    .then(data => JSON.stringify(data))
+    .then(worldstateData => {
+      const ws = new WorldState(worldstateData);
+
+      return {
+        isDay: ws.earthCycle.isDay,
+        timeLeft: ws.earthCycle.timeLeft
+      };
+    });
+}
+
+/**
+ * @typedef CetusResult
+ * @type {object}
+ * @property {Boolean} isDay
+ * @property {String} timeLeft
+ */
+
+/**
+ * Get earth time
+ * @returns {Promise<CetusResult>}
+ */
+function cetus() {
+  return axios
+    .get("http://content.warframe.com/dynamic/worldState.php")
+    .then(response => response.data)
+    .then(data => JSON.stringify(data))
+    .then(worldstateData => {
+      const ws = new WorldState(worldstateData);
+
+      return {
+        isDay: ws.cetusCycle.isDay,
+        timeLeft: ws.cetusCycle.timeLeft
+      };
+    });
+}
+
+module.exports = { alerts, sortie, news, voidTrader, earth, cetus };
