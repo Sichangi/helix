@@ -275,4 +275,42 @@ function cetus() {
     });
 }
 
-module.exports = { alerts, sortie, news, voidTrader, earth, cetus };
+/**
+ * @typedef Fissure
+ * @type {object}
+ * @property {string} node
+ * @property {string} missionType
+ * @property {string} enemy
+ * @property {string} tier
+ * @property {string} expires
+ */
+
+/**
+ * Get current fissure missions
+ * @returns {Promise<Fissure[]>}
+ */
+function fissures() {
+  return axios
+    .get("http://content.warframe.com/dynamic/worldState.php")
+    .then(response => response.data)
+    .then(data => JSON.stringify(data))
+    .then(worldstateData => {
+      const ws = new WorldState(worldstateData);
+
+      const results = [];
+
+      ws.fissures.forEach(fissure => {
+        results.push({
+          node: fissure.node.replace(" (", "/").replace(")", ""),
+          missionType: fissure.missionType,
+          enemy: fissure.enemy,
+          tier: fissure.tier,
+          expires: fissure.eta
+        });
+      });
+
+      return results;
+    });
+}
+
+module.exports = { alerts, sortie, news, voidTrader, earth, cetus, fissures };
