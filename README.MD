@@ -1,7 +1,7 @@
 # 🤖 Helix
 
 [![Known Vulnerabilities](https://snyk.io/test/github/MarkNjunge/helix/badge.svg?targetFile=package.json)](https://snyk.io/test/github/MarkNjunge/helix?targetFile=package.json)
-[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](./contributing.md)
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/MarkNjunge/helix/blob/master/CONTRIBUTING.MD)
 
 A [Warframe](https://www.warframe.com/) ~~bot~~ cephalon.
 
@@ -43,4 +43,4 @@ Example usage: `/wf alerts`
 
 ## Contributing
 
-See [Contributing.MD](./contributing.md)
+See [Contributing.MD](https://github.com/MarkNjunge/helix/blob/master/CONTRIBUTING.MD)
