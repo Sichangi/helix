@@ -1,3 +1,8 @@
 {
-  "javascript.implicitProjectConfig.checkJs": true
+  "javascript.implicitProjectConfig.checkJs": true,
+  "prettier.singleQuote": false,
+  "prettier.semi": true,
+  "prettier.useTabs": false,
+  "editor.wordWrapColumn": 100,
+  "editor.formatOnSave": true
 }
