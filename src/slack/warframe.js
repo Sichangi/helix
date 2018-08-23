@@ -38,7 +38,7 @@ function slashWF(requestBody) {
     case "fissures":
       fissures(requestBody);
       break;
-    case "alert-watch":
+    case "alerts-watch":
       alertWatch(requestBody);
       break;
     default:
@@ -116,11 +116,11 @@ function help(requestBody) {
       text: `Returns the current time on and bounties cetus e.g. \`${command} cetus\``
     },
     {
-      title: "alert-watch",
-      fallback: "alert-watch",
-      text: `Manages your live alert notifications to watch e.g. \`${command} alert-watch:[start/stop/add/remove]:[reward]\``
-     },
-     {
+      title: "alerts-watch",
+      fallback: "alerts-watch",
+      text: `Manages your live alert notifications e.g. \`${command} alerts-watch:[start/stop/add/remove]:[reward]\``
+    },
+    {
       title: "fissures",
       fallback: "fissures",
       text: `Returns the current fissure missions e.g. \`${command} fissures\``
@@ -141,11 +141,11 @@ function help(requestBody) {
  * Manage live alerts notification
  */
 function alertWatch({text, user_id}){
-    const request = text.split(":");
-    const command = request[1];
-    const query = request[2] || false;
+  const request = text.split(":");
+  const command = request[1];
+  const query = request[2] || false;
 
-    warframe.live.manage(command, query, user_id, "alerts")
+  warframe.live.manage(command, query, user_id, "alerts");
 }
 
 /**
@@ -227,7 +227,7 @@ function alerts(requestBody) {
         attachments.push({
           title: alert.type,
           fallback: alert.type,
-          text: `${alert.node}${alert.archwing? ' (Archwing)': ' '}\n${alert.faction} level ${alert.minEnemyLevel} - ${alert.maxEnemyLevel}`,
+          text: `${alert.node}${alert.archwing? " (Archwing)": " "}\n${alert.faction} level ${alert.minEnemyLevel} - ${alert.maxEnemyLevel}`,
           thumb_url: alert.reward.thumbnail,
           fields: [
             {
@@ -411,12 +411,6 @@ function fissures(requestBody) {
       );
     })
     .catch(error => handleError(error, requestBody));
-}
-
-/**
- * Handle live notification errors
- */
-function handleLiveErrors(error){
 }
 
 /**

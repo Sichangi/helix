@@ -5,17 +5,18 @@ const config = require("./../config");
  * Send a regular message
  * @param {String} text Message
  * @param {String} channel Channel id
+ * @param {Boolean} as_user
  * @param {Object} attachments Message attachments
  */
-function sendRegularMessage(text, channel, attachments = []) {
+function sendRegularMessage(text, channel, as_user, attachments = []) {
   return axios({
     method: "post",
     url: "https://slack.com/api/chat.postMessage",
     headers: { Authorization: `Bearer ${config.slackOauth}` },
     data: {
-      text: text,
-      as_user: true,
-      channel: channel,
+      text,
+      as_user,
+      channel,
       attachments
     }
   });
@@ -34,7 +35,7 @@ function sendSlashMessage(response_url, response_type, text, attachments = []) {
     url: response_url,
     headers: { "Content-type": "application/json" },
     data: {
-      response_type: response_type,
+      response_type,
       text,
       attachments
     }
