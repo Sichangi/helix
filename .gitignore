@@ -109,6 +109,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+.idea/*
 
 # End of https://www.gitignore.io/api/visualstudiocode,windows,node
 

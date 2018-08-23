@@ -38,6 +38,9 @@ function slashWF(requestBody) {
     case "fissures":
       fissures(requestBody);
       break;
+    case "alert-watch":
+      alertWatch(requestBody);
+      break;
     default:
       unknown(requestBody);
       break;
@@ -113,6 +116,11 @@ function help(requestBody) {
       text: `Returns the current time on and bounties cetus e.g. \`${command} cetus\``
     },
     {
+      title: "alert-watch",
+      fallback: "alert-watch",
+      text: `Manages your live alert notifications to watch e.g. \`${command} alert-watch:[start/stop/add/remove]:[reward]\``
+     },
+     {
       title: "fissures",
       fallback: "fissures",
       text: `Returns the current fissure missions e.g. \`${command} fissures\``
@@ -127,6 +135,17 @@ function help(requestBody) {
       attachments
     )
     .catch(error => handleError(error, requestBody));
+}
+
+/**
+ * Manage live alerts notification
+ */
+function alertWatch({text, user_id}){
+    const request = text.split(":");
+    const command = request[1];
+    const query = request[2];
+
+    warframe.live.manage(command, query, user_id, "alerts")
 }
 
 /**
@@ -205,20 +224,10 @@ function alerts(requestBody) {
       const attachments = [];
 
       results.forEach(alert => {
-        let text = `${alert.node}\n${alert.faction} level ${
-          alert.minEnemyLevel
-        } - ${alert.maxEnemyLevel}`;
-
-        if (alert.archwing) {
-          text = `${alert.node} (Archwing)\n${alert.faction} level ${
-            alert.minEnemyLevel
-          } - ${alert.maxEnemyLevel}`;
-        }
-
         attachments.push({
           title: alert.type,
           fallback: alert.type,
-          text,
+          text: `${alert.node}${alert.archwing? ' (Archwing)': ' '}\n${alert.faction} level ${alert.minEnemyLevel} - ${alert.maxEnemyLevel}`,
           thumb_url: alert.reward.thumbnail,
           fields: [
             {
@@ -226,7 +235,7 @@ function alerts(requestBody) {
               value: alert.reward.asString.replace("cr", " credits")
             }
           ],
-          footer: "Avalable until",
+          footer: "Available until",
           ts: alert.expiry
         });
       });
@@ -330,12 +339,7 @@ function earth(requestBody) {
   warframe.worldstate
     .earth()
     .then(earth => {
-      let text = "";
-      if (earth.isDay) {
-        text = `It is now day on Earth. Time left: ${earth.timeLeft}`;
-      } else {
-        text = `It is now night on Earth. Time left: ${earth.timeLeft}`;
-      }
+      let text = `It is now ${earth.isDay? "day": "night"} on Earth. Time left: ${earth.timeLeft}`;
 
       return messaging.sendSlashMessage(
         requestBody.response_url,
@@ -355,13 +359,7 @@ function cetus(requestBody) {
     .then(cetus => {
       const attachments = [];
 
-      let timeOfDay = "";
-      if (cetus.isDay) {
-        timeOfDay = "day";
-      } else {
-        timeOfDay = "night";
-      }
-      const text = `It is now *${timeOfDay}* on Cetus. Time left: *${
+      const text = `It is now *${cetus.isDay? "day": "night"}* on Cetus. Time left: *${
         cetus.timeLeft
       }*\nBounties expire in: *${cetus.expires}*`;
 
@@ -416,12 +414,18 @@ function fissures(requestBody) {
 }
 
 /**
+ * Handle live notification errors
+ */
+function handleLiveErrors(error){
+}
+
+/**
  * Handle error for warframe requests
  */
 function handleError(error, requestBody, query = "") {
   if (
-    error.message == "No results found." ||
-    error.message == "Request failed with status code 404"
+    error.message === "No results found." ||
+    error.message === "Request failed with status code 404"
   ) {
     error.message = `No results found for *"${query}"*`;
   }

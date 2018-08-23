@@ -14,6 +14,7 @@ function sendRegularMessage(text, channel, attachments = []) {
     headers: { Authorization: `Bearer ${config.slackOauth}` },
     data: {
       text: text,
+      as_user: true,
       channel: channel,
       attachments
     }
@@ -22,10 +23,10 @@ function sendRegularMessage(text, channel, attachments = []) {
 
 /**
  * Send a message in response to a slash command
- * @param {String} response_url Message response url recieved in the body
+ * @param {String} response_url Message response url received in the body
  * @param {String} response_type in_channel or ephemeral
  * @param {String} text Message text
- * @param {Object} attachments Message attahments
+ * @param {Object} attachments Message
  */
 function sendSlashMessage(response_url, response_type, text, attachments = []) {
   return axios({
