@@ -14,7 +14,7 @@ function manage(command, queryItem, userId, context) {
     let collectionRef = null
     let task = null
 
-    if(!queryItem || !context || !userId) throw new Error("Expected a queryItem, userId and context, [One of them is missing]")
+    if(!context || !userId) throw new Error("Expected a userId and context, [One of them is missing]")
 
     if (context === "alerts") {
         collectionRef = db.ALERTREF
@@ -26,10 +26,12 @@ function manage(command, queryItem, userId, context) {
 
     switch (command) {
         case 'add':
+            if(!queryItem) throw new Error("Expected a queryItem, none was provided")
             let value = new LiveReward(queryItem, userId)
             db.push(collectionRef, {value})
             break;
         case 'remove':
+            if(!queryItem) throw new Error("Expected a queryItem, none was provided")
             db.remove(collectionRef, {value: queryItem})
             break;
         case 'start':

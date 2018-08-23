@@ -143,7 +143,7 @@ function help(requestBody) {
 function alertWatch({text, user_id}){
     const request = text.split(":");
     const command = request[1];
-    const query = request[2];
+    const query = request[2] || false;
 
     warframe.live.manage(command, query, user_id, "alerts")
 }
