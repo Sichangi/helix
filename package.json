@@ -20,6 +20,9 @@
     "warframe-worldstate-parser": "^2.0.2",
     "winston": "^3.0.0"
   },
+  "devDependencies": {
+    "eslint": "^5.4.0"
+  },
   "engines": {
     "node": ">=8.11.3"
   }
