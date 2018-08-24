@@ -36,7 +36,7 @@ function manage(command, queryItem, userId, context) {
 
   switch (command) {
   case "add":
-    if(!db.get(collectionRef, "watchList").find(({item}) => item === queryItem)){
+    if(!db.get(collectionRef, "watchList").find(({item, user}) => (item.toLowerCase() === queryItem.toLowerCase() && user === userId))){
       db.push(collectionRef, {key: "watchList", value: reward});
       sendResponse(`I'm now watching for ${queryItem} ${context}`);
     } else {
