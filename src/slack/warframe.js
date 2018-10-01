@@ -138,20 +138,22 @@ function help(requestBody) {
 }
 
 /**
+ * Live Message Subscription
+ */
+warframe.live.messageSubject.subscribe(({message, userId, attachments = []}) => {
+  messaging.sendRegularMessage(message, userId, true, attachments)
+    .then(() => winston.info(`Successfully sent an update to: ${userId}`))
+    .catch(err => winston.error(err.message));
+}, ({message, fromErrResponseBody}) => {
+  winston.error(message);
+  unknown(fromErrResponseBody);
+});
+
+/**
  * Manage live alerts notification
  */
 function alertWatch(requestBody){
-  warframe.live.messageSubject.subscribe(({message, userId, attachments = []}) => {
-    messaging.sendRegularMessage(message, userId, true, attachments)
-      .then(() => winston.info(`Successfully sent an update to: ${userId}`))
-      .catch(err => winston.error(err.message));
-  }, ({message, fromErrResponseBody}) => {
-    winston.error(message);
-    unknown(fromErrResponseBody);
-  });
-
   warframe.live.manage(requestBody, "alerts");
-
 }
 
 /**
