@@ -1,9 +1,7 @@
 const {alerts} = require("../worldstate");
 const db = require("../../db");
-const winston = require("winston");
 const cron = require("node-cron");
-const {sendRegularMessage} = require("../../../slack/messaging");
-const {schedules} = require("./");
+const {schedules, messageSubject} = require("./");
 
 /**
  *
@@ -51,9 +49,7 @@ function sendAlertUpdate(rewardUpdate) {
     ts: alert.expiry
   };
 
-  sendRegularMessage(`Some ${rewardUpdate.item} reward is available`, rewardUpdate.user, true, [message])
-    .then(() => winston.info(`Successfully sent an update: ${rewardUpdate.item}`))
-    .catch(err => winston.error(err.message));
+  messageSubject.next({message: `Some ${rewardUpdate.item} reward is available`, userId: rewardUpdate.user, attachments: [message]});
 }
 
 exports.task = cron.schedule(schedules.alerts, async () => {

@@ -140,12 +140,18 @@ function help(requestBody) {
 /**
  * Manage live alerts notification
  */
-function alertWatch({text, user_id}){
-  const request = text.split(":");
-  const command = request[1];
-  const query = request[2] || false;
+function alertWatch(requestBody){
+  warframe.live.messageSubject.subscribe(({message, userId, attachments = []}) => {
+    messaging.sendRegularMessage(message, userId, true, attachments)
+      .then(() => winston.info(`Successfully sent an update to: ${userId}`))
+      .catch(err => winston.error(err.message));
+  }, ({message, fromErrResponseBody}) => {
+    winston.error(message);
+    unknown(fromErrResponseBody);
+  });
 
-  warframe.live.manage(command, query, user_id, "alerts");
+  warframe.live.manage(requestBody, "alerts");
+
 }
 
 /**
@@ -339,7 +345,7 @@ function earth(requestBody) {
   warframe.worldstate
     .earth()
     .then(earth => {
-      let text = `It is now ${earth.isDay? "day": "night"} on Earth. Time left: ${earth.timeLeft}`;
+      const text = `It is now ${earth.isDay? "day": "night"} on Earth. Time left: ${earth.timeLeft}`;
 
       return messaging.sendSlashMessage(
         requestBody.response_url,

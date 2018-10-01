@@ -1,15 +1,20 @@
-const {sendRegularMessage} = require("../../../slack/messaging");
 const db = require("../../db");
 const {LiveReward} = require("../../db/models");
+const {Subject} = require("rxjs");
 
+const messageSubject = new Subject();
 const schedules = {
   // Every 5 minutes
   alerts: "* */5 * * * *",
 };
 
-function manage(command, queryItem, userId, context) {
+function manage(responseBody, context) {
   /* Declared here to avoid cyclic dependency issue [A requires B requires A] */
   const alerts = require("./alerts");
+  const userId = responseBody.user_id;
+  const request = responseBody.text.split(":");
+  const command = request[1];
+  const queryItem = request[2] || false;
 
   let collectionRef;
   let task;
@@ -51,16 +56,21 @@ function manage(command, queryItem, userId, context) {
     sendResponse(`Successfully stopped watching ${context}`);
     break;
   default:
-    throw new Error(`Unknown command : ${command}`);
+    sendErrorResponse(`Unknown command : ${context}:${command}`);
   }
 
-  function sendResponse(message) {
-    sendRegularMessage(message, userId, true);
+  function sendResponse(message, attachments) {
+    messageSubject.next({message, userId, attachments});
+  }
+
+  function sendErrorResponse(message){
+    messageSubject.error({message, fromErrResponseBody: responseBody});
   }
 }
 
 // TODO: Find appropriate error reporting strategy for failing crons [if they do fail]...
 module.exports = {
+  messageSubject,
   manage,
   schedules
 };
