@@ -118,7 +118,7 @@ function help(requestBody) {
     {
       title: "alerts-watch",
       fallback: "alerts-watch",
-      text: `Manages your live alert notifications e.g. \`${command} alerts-watch:[start/stop/add/remove]:[reward]\``
+      text: `Manages your live alert notifications e.g. \`${command} alerts-watch:[start/stop/add/remove/list]:[reward]\``
     },
     {
       title: "fissures",

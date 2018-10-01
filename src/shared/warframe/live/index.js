@@ -33,6 +33,9 @@ function manage(responseBody, context) {
   }
 
   switch (command) {
+  case "list":
+    sendResponse(`[${context.toUpperCase()}] Here are list of rewards you are watching`, getUserRewards());
+    break;
   case "add":
     if(!db.get(collectionRef, "watchList").find(({item, user}) => item.toLowerCase() === queryItem.toLowerCase() && user === userId)){
       db.push(collectionRef, {key: "watchList", value: reward});
@@ -57,6 +60,13 @@ function manage(responseBody, context) {
     break;
   default:
     sendErrorResponse(`Unknown command : ${context}:${command}`);
+  }
+
+  function getUserRewards(){
+    const val = db.get(collectionRef, "watchList")
+      .filter(({user}) => user === userId)
+      .map(({item}) => ({text: item.charAt(0).toUpperCase() + item.slice(1)}));
+    return val.length > 0? val : [{text: "You're currently not watching anything///"}];
   }
 
   function sendResponse(message, attachments) {
