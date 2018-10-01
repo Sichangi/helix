@@ -34,7 +34,7 @@ function manage(responseBody, context) {
 
   switch (command) {
   case "list":
-    sendResponse(`[${context.toUpperCase()}] Here are list of rewards you are watching`, getUserRewards());
+    sendResponse(`[${context.toUpperCase()}] Here is the list of rewards you are watching:`, getUserRewards());
     break;
   case "add":
     if(!db.get(collectionRef, "watchList").find(({item, user}) => item.toLowerCase() === queryItem.toLowerCase() && user === userId)){
