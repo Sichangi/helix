@@ -4,9 +4,7 @@ const winston = require("winston");
 
 // Initialize logger
 const { combine, timestamp, printf } = winston.format;
-const customFormat = printf(info => {
-  return `${info.timestamp} ${info.level}: ${info.message}`;
-});
+const customFormat = printf(info => `${info.timestamp} ${info.level}: ${info.message}`);
 winston.configure({
   level: "debug",
   format: combine(timestamp(), customFormat),

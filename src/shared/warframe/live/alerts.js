@@ -13,11 +13,11 @@ const {schedules} = require("./");
 async function filterAlerts(watchArray) {
   const currentAlerts = await alerts();
 
-  let alertUpdates = [];
+  const alertUpdates = [];
 
   watchArray.forEach(({item}, index) => {
-    let thisAlert = watchArray[index];
-    let found = currentAlerts.find(({reward}) => reward.asString.toLowerCase().indexOf(item.toLowerCase()) !== -1);
+    const thisAlert = watchArray[index];
+    const found = currentAlerts.find(({reward}) => reward.asString.toLowerCase().indexOf(item.toLowerCase()) !== -1);
     if (found) {
       thisAlert.expiry = found.expiry;
       thisAlert.mission = found;
@@ -36,7 +36,7 @@ function sendAlertUpdate(rewardUpdate) {
 
   const alert = rewardUpdate.mission;
 
-  let message = {
+  const message = {
     title: `[Alert] ${alert.type} mission rewarding ${rewardUpdate.item} is Available`,
     fallback: alert.type,
     text: `${alert.node}${alert.archwing ? " (Archwing)" : " "}\n${alert.faction} level ${alert.minEnemyLevel} - ${alert.maxEnemyLevel}`,
@@ -62,7 +62,7 @@ exports.task = cron.schedule(schedules.alerts, async () => {
 
   if (isWatching && watchList.length > 0) {
     const available = await filterAlerts(watchList);
-    available.forEach((update) => {
+    available.forEach(update => {
       const dbVal = db.get(db.ALERTREF, "sentList");
 
       if (!dbVal.find(({expiry}) => expiry === update.mission.expiry)) {

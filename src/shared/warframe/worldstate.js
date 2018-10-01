@@ -179,7 +179,7 @@ function voidTrader() {
     .then(worldstateData => {
       const ws = new WorldState(worldstateData);
 
-      const result = {
+      return {
         // @ts-ignore
         active: ws.voidTrader.active,
         // @ts-ignore
@@ -191,8 +191,6 @@ function voidTrader() {
         // @ts-ignore
         inventory: ws.voidTrader.inventory
       };
-
-      return result;
     });
 }
 
@@ -253,7 +251,7 @@ function cetus() {
       let expires = "";
 
       ws.syndicateMissions.forEach(mission => {
-        if (mission.syndicate == "Ostrons") {
+        if (mission.syndicate === "Ostrons") {
           mission.jobs.forEach(job => {
             bounties.push({
               type: job.type,

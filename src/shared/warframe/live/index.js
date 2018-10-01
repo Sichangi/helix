@@ -1,42 +1,35 @@
 const {sendRegularMessage} = require("../../../slack/messaging");
 const db = require("../../db");
 const {LiveReward} = require("../../db/models");
-// const bounties = require('./bounties')
 
 const schedules = {
   // Every 5 minutes
   alerts: "* */5 * * * *",
-  // Every 20 minutes
-  bounties: "* */20 * * * *"
 };
 
 function manage(command, queryItem, userId, context) {
   /* Declared here to avoid cyclic dependency issue [A requires B requires A] */
   const alerts = require("./alerts");
 
-  // const bounties = require('./bounties')
   let collectionRef;
   let task;
   let reward;
 
-  if (!context) throw new Error("Expected a context to manage the live watch, None provided");
+  if (!context) {throw new Error("Expected a context to manage the live watch, None provided");}
 
   if (context === "alerts") {
     collectionRef = db.ALERTREF;
     task = alerts.task;
-  } else if (context === "bounties") {
-    collectionRef = db.BOUNTYREF;
-    // task = bounties.task
   }
 
   if (command === "add" || command === "remove") {
-    if (!queryItem || !userId) throw new Error("Expected a queryItem, none was provided");
+    if (!queryItem || !userId) {throw new Error("Expected a queryItem, none was provided");}
     reward = new LiveReward(queryItem, userId);
   }
 
   switch (command) {
   case "add":
-    if(!db.get(collectionRef, "watchList").find(({item, user}) => (item.toLowerCase() === queryItem.toLowerCase() && user === userId))){
+    if(!db.get(collectionRef, "watchList").find(({item, user}) => item.toLowerCase() === queryItem.toLowerCase() && user === userId)){
       db.push(collectionRef, {key: "watchList", value: reward});
       sendResponse(`I'm now watching for ${queryItem} ${context}`);
     } else {
@@ -66,7 +59,7 @@ function manage(command, queryItem, userId, context) {
   }
 }
 
-// TODO: Find appropriate error reporting strategy for failing crons...
+// TODO: Find appropriate error reporting strategy for failing crons [if they do fail]...
 module.exports = {
   manage,
   schedules
